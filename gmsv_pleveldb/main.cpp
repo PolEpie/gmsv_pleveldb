@@ -606,7 +606,7 @@ int Init(lua_State *L)
 
 	funcTable->SetMember("setString",	db_setString);
 	funcTable->SetMember("setDouble",	db_setDouble);
-	funcTable->SetMember("setVector",	db_setAngle);
+	funcTable->SetMember("setVector",	db_setVector);
 	funcTable->SetMember("setAngle",	db_setAngle);
 	funcTable->SetMember("setBool",		db_setBool);
 	funcTable->SetMember("setInteger",	db_setInteger);
