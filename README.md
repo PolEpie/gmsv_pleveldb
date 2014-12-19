@@ -3,7 +3,26 @@ gmsv_pleveldb
 
 Database wrapper for <a href="https://github.com/google/leveldb">LevelDB</a>.
 
-Wrapper created by TheLastPenguin. 
+Download gmsv_leveldb_win32.dll <a href="https://github.com/thelastpenguin/gmsv_pleveldb/raw/master/libleveldb.dll">here</a>
+
+Download libleveldb.dll <a href="https://github.com/thelastpenguin/gmsv_pleveldb/raw/master/libleveldb.dll">here</a>
+
+LevelDB is a simple light weight keyvalue store developed by Google. A key value store is a kind of extremely simple database which does exactly what it's name implies. For every key it associates one string value. In the case of leveldb a key may be any binary string and a value may likewise be any binary value of for all practical intents and purposes any length desirable. 
+LevelDB is optimized for extremely high read and write performance and uses a small memory cache so the database is implemented as an entirely synchronous system. All data gets written into the database folder located in garrysmod/x_leveldb/. The database is split into multiple files by Google's design to achieve better performance. It's really quite clever I assure you, you can read about the implementation specifics with the link provided at the top of this page.
+
+All of this may leave you wondering "what can I use leveldb for?" which is a perfectly valid question. LevelDB is best thought of as a very high performance serverside cookie system. As a side note it is actually what Google Chrome uses to store cookies supposedly. An example of how you might do this is as follows:
+```Lua
+hook.Add('PlayerDeath', 'deathCounter', function(pl)
+  local succ, deaths = leveldb.getInteger('DeathCounter.'..pl:SteamID()..'.deaths');
+  if succ then
+    leveldb.setInteger('DeathCounter.'..pl:SteamID()..'.deaths', deaths + 1);
+  else
+    leveldb.setInteger('DeathCounter.'..pl:SteamID()..'.deaths', 1);
+  end
+end);
+```
+
+Keep in mind when using leveldb that it will only store a prefix once per file block (4kb of key/value pairs) so the length of the key prefix has almost negligable impact on storage usage so your prefixes can be pretty long (make them descriptive) but obviously if they are too long there is some cost when retreiving values since they take more time to hash and compair. Secondly it's a good idea to use keys that are sequential grouping data that is often accessed as a set together. This way the database can take advantage of caching to load a segment of data into the cache. It is also more convenient for iterating through the data if you need to.
 
 Installation
 =============
