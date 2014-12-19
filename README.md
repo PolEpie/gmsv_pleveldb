@@ -69,7 +69,7 @@ leveldb.setString('helloString', 'hello world');
 local succ, value = leveldb.getString('helloString');
 
 leveldb.setDouble('helloDouble', -3.1415926);
-local succ, value = leveldb.getDouble('helloDouble);
+local succ, value = leveldb.getDouble('helloDouble');
 
 leveldb.setInteger('helloInteger', -3239);
 local succ, value = leveldb.getInteger('helloInteger');
