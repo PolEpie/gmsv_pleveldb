@@ -45,7 +45,7 @@ leveldb.setDouble('helloDouble', -3.1415926);
 local succ, value = leveldb.getDouble('helloDouble);
 
 leveldb.setInteger('helloInteger', -3239);
-local succ, value = leveldb.getInteger('helloInteger);
+local succ, value = leveldb.getInteger('helloInteger');
 
 leveldb.setBool('helloBool', true);
 local succ, value = leveldb.getDouble('helloBool');
@@ -57,3 +57,26 @@ leveldb.setAngle('helloAngle', Angle(1.3,2.5,3.8));
 local succ, value = leveldb.getAngle('helloAngle');
 ```
 
+<h6>Iteration</h6>
+The LevelDB wrapper provides a special iterator for iterating over key blocks in the database. A key block is considdered to be a block of all keys with the same prefix. 
+
+<strong>leveldb.iter</strong> (string:prefix) -> function:iterator
+
+```Lua
+for key, value in leveldb.iter('rp:player')do
+  print('key: '..key..'   value: '..value);
+end
+```
+Take note that key, value will always be strings even if the datatype of the original data was a vector, double, integer, angle, or bool. The library does however provide a set of functions for converting these strings into usable lua datatypes.
+
+<h6>Converters</h6>
+
+<strong>toInteger</strong> (string:value) -> integer:value
+
+<strong>toDouble</strong> (string:value) -> double:value
+
+<strong>toBool</strong> (string:value) -> bool:value
+
+<strong>toVector</strong> (string:value) -> Vector:value
+
+<strong>toAngle</strong> (string:value) -> Angle:value
