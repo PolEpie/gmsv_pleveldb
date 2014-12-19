@@ -7,8 +7,10 @@ Wrapper created by TheLastPenguin.
 
 Installation
 =============
-1) Place gmsv_leveldb_win32.dll in your garrysmod/lua/bin/ folder with the rest of your C++ modules. Create this folder if it does not exist.
-2) Place libleveldb.dll in your garrysmod/ directory with hl2.exe 
+
+  1. Place gmsv_leveldb_win32.dll in your garrysmod/lua/bin/ folder with the rest of your C++ modules. Create this folder if it does not exist.
+
+  2. Place libleveldb.dll in your garrysmod/ directory with hl2.exe 
 
 Documentation
 =============
