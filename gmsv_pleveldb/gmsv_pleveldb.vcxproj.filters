@@ -16,6 +16,12 @@
     <Filter Include="Source Files\lua-headers">
       <UniqueIdentifier>{3e2da3eb-b16a-4d69-b503-57b57094be76}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Database">
+      <UniqueIdentifier>{ce30bfcf-7d1d-40ca-8829-36d4b2789331}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Utils">
+      <UniqueIdentifier>{dfcba871-7f20-4935-9629-b4efd10842d0}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -31,27 +37,33 @@
       <Filter>Source Files\lua-headers</Filter>
     </ClCompile>
     <ClCompile Include="Database.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\Database</Filter>
     </ClCompile>
     <ClCompile Include="DatabaseIterator.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\Database</Filter>
+    </ClCompile>
+    <ClCompile Include="Murmer.cpp">
+      <Filter>Source Files\Utils</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="main.h">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="Database.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
     <ClInclude Include="Vector.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="DatabaseIterator.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
     <ClInclude Include="LuaUpvalues.h">
       <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Database.h">
+      <Filter>Source Files\Database</Filter>
+    </ClInclude>
+    <ClInclude Include="DatabaseIterator.h">
+      <Filter>Source Files\Database</Filter>
+    </ClInclude>
+    <ClInclude Include="Murmer.h">
+      <Filter>Source Files\Utils</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

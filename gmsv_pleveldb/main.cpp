@@ -9,6 +9,7 @@
 #include "Database.h"
 #include "DatabaseIterator.h"
 #include "Vector.h"
+#include "Murmer.h"
 
 using namespace GarrysMod::Lua;
 
@@ -624,12 +625,39 @@ int Init(lua_State *L)
 	funcTable->SetMember("toBool", strToBool);
 
 	funcTable->SetMember("iter", new_iter);
+	
+	funcTable->SetMember("mhash", MurmurHash);
 
 	funcTable->SetMember("delete", database_delete);
 
 	g_Lua->SetGlobal("leveldb", funcTable);
 	g_Lua->SetGlobal("lvldb", funcTable);
 	funcTable->UnReference();
+
+
+	g_Lua->Push(g_Lua->GetGlobal("RunString"));
+
+	// adds s_ versions of methods. Basically makes them return value or nil on failure, no error returned.
+	g_Lua->Push(g_Lua->GetGlobal("RunString"));
+	g_Lua->Push(
+			"local getInteger=lvldb.getInteger;function lvldb.s_getInteger(a)local b,c=getInteger(a)"
+			"return b and c or nil end;local d=lvldb.getDouble;function lvldb.s_getDouble(a)local b,"
+			"c=getDouble(a)return b and c or nil end;local d=lvldb.getAngle;function lvldb.s_getAngl"
+			"e(a)local b,c=getAngle(a)return b and c or nil end;local d=lvldb.getVector;function lvl"
+			"db.s_getVector(a)local b,c=getVector(a)return b and c or nil end;local d=lvldb.getBool;"
+			"function lvldb.s_getBool(a)local b,c=getBool(a)return b and c or nil end;local d=lvldb."
+			"getString;function lvldb.s_getString(a)local b,c=getString(a)return b and c or nil end"
+		);
+	g_Lua->Call(1, 0);
+
+	g_Lua->Push(g_Lua->GetGlobal("RunString"));
+	g_Lua->Push(
+			"local getInteger,setInteger=lvldb.getInteger,lvldb.setInteger;function lvldb.addInteger"
+			"(a,b)local c,d=getInteger(a)if c then setInteger(a,d+b)else setInteger(a,b)end end;loca"
+			"l getDouble,setDouble=lvldb.getDouble,lvldb.setDouble;function lvldb.addDouble(a,b)loca"
+			"l c,d=getDouble(a)if c then setDouble(a,d+b)else setDouble(a,b)end end"
+		);
+	g_Lua->Call(1, 0);
 
 	return 0;
 }
