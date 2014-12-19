@@ -16,13 +16,18 @@ Database::Database(const char* path) {
 	db = leveldb_open(options, path, &err);
 
 	if (err != NULL) {
-		throw 1;
+		err = NULL;
+		leveldb_repair_db(options, path, &err);
+		if (err != NULL) {
+			throw 1;
+		}
 	}
 
 	leveldb_free(&err);
 
 	woptions = leveldb_writeoptions_create();
 	roptions = leveldb_readoptions_create();
+
 }
 
 Database::~Database() {

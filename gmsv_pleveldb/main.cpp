@@ -26,32 +26,35 @@ Database db("garrysmod/x_leveldb");
 LUA_FUNCTION(db_set) {
 	ILuaInterface* g_Lua = Lua();
 	g_Lua->CheckType(1, Type::STRING);
-	
-	string key = g_Lua->GetString(1);
+
+	size_t keyLength;
+	const char* key = g_Lua->GetString(1, &keyLength);
+
 	int type = g_Lua->GetType(2);
 
 	char* err = NULL;
 
 
 	if (type == Type::STRING) {
-		string value = g_Lua->GetString(2);
-		db.put(key, value.c_str(), value.length(), err);
+		size_t valueLength;
+		const char* value = g_Lua->GetString(2, &valueLength);
+		db.put(key, keyLength, value, valueLength, err);
 	}
 	else if (type == Type::NUMBER) {
 		double value = g_Lua->GetNumber(2);
-		db.put(key, (char*)&value, sizeof value, err);
+		db.put(key, keyLength, (char*)&value, sizeof value, err);
 	}
 	else if (type == Type::VECTOR) {
 		Vector* vec = (Vector*)*g_Lua->GetUserDataPtr(2);
-		db.put(key, (char*) vec, sizeof(Vector), err);
+		db.put(key, keyLength, (char*) vec, sizeof(Vector), err);
 	}
 	else if (type == Type::ANGLE) {
 		Angle* ang = (Angle*)*g_Lua->GetUserDataPtr(2);
-		db.put(key, (char*)ang, sizeof(Angle), err);
+		db.put(key, keyLength, (char*)ang, sizeof(Angle), err);
 	}
 	else if (type == Type::BOOL) {
 		bool value = g_Lua->GetBool(2);
-		db.put(key, (char*)&value, sizeof value, err);
+		db.put(key, keyLength, (char*)&value, sizeof value, err);
 	}
 	else {
 		g_Lua->Error("expected data arg #2, got nil");
@@ -75,12 +78,16 @@ LUA_FUNCTION(db_setString) {
 	g_Lua->CheckType(1, Type::STRING);
 	g_Lua->CheckType(2, Type::STRING);
 
-	string key = g_Lua->GetString(1);
+	size_t keyLength;
+	const char* key = g_Lua->GetString(1, &keyLength);
 
 	char* err = NULL;
 
-	string value = g_Lua->GetString(2);
-	db.put(key, value.c_str(), value.length(), err);
+
+	size_t valueLength;
+	const char* value = g_Lua->GetString(2, &valueLength);
+	db.put(key, keyLength, value, valueLength, err);
+
 	if (err != NULL) {
 		g_Lua->Push(false);
 		g_Lua->Push(err);
@@ -99,12 +106,13 @@ LUA_FUNCTION(db_setDouble) {
 	g_Lua->CheckType(1, Type::STRING);
 	g_Lua->CheckType(2, Type::NUMBER);
 
-	string key = g_Lua->GetString(1);
+	size_t keyLength;
+	const char* key = g_Lua->GetString(1, &keyLength);
 
 	char* err = NULL;
 
 	double value = g_Lua->GetNumber(2);
-	db.put(key, (char*)&value, sizeof value, err);
+	db.put(key, keyLength, (char*)&value, sizeof(value), err);
 
 	if (err != NULL) {
 		g_Lua->Push(false);
@@ -124,12 +132,13 @@ LUA_FUNCTION(db_setInteger) {
 	g_Lua->CheckType(1, Type::STRING);
 	g_Lua->CheckType(2, Type::NUMBER);
 
-	string key = g_Lua->GetString(1);
+	size_t keyLength;
+	const char* key = g_Lua->GetString(1, &keyLength);
 
 	char* err = NULL;
 
 	int value = g_Lua->GetNumber(2);
-	db.put(key, (char*)&value, sizeof value, err);
+	db.put(key, keyLength, (char*)&value, sizeof value, err);
 
 	if (err != NULL) {
 		g_Lua->Push(false);
@@ -149,12 +158,13 @@ LUA_FUNCTION(db_setVector) {
 	g_Lua->CheckType(1, Type::STRING);
 	g_Lua->CheckType(2, Type::NUMBER);
 
-	string key = g_Lua->GetString(1);
+	size_t keyLength;
+	const char* key = g_Lua->GetString(1, &keyLength);
 
 	char* err = NULL;
 
 	Vector* vec = (Vector*)*g_Lua->GetUserDataPtr(2);
-	db.put(key, (char*)vec, sizeof(Vector), err);
+	db.put(key, keyLength, (char*)vec, sizeof(Vector), err);
 
 	if (err != NULL) {
 		g_Lua->Push(false);
@@ -174,12 +184,13 @@ LUA_FUNCTION(db_setAngle) {
 	g_Lua->CheckType(1, Type::STRING);
 	g_Lua->CheckType(2, Type::ANGLE);
 
-	string key = g_Lua->GetString(1);
+	size_t keyLength;
+	const char* key = g_Lua->GetString(1, &keyLength);
 
 	char* err = NULL;
 
 	Angle* ang = (Angle*)*g_Lua->GetUserDataPtr(2);
-	db.put(key, (char*)ang, sizeof(Angle), err);
+	db.put(key, keyLength, (char*)ang, sizeof(Angle), err);
 
 	if (err != NULL) {
 		g_Lua->Push(false);
@@ -199,12 +210,13 @@ LUA_FUNCTION(db_setBool) {
 	g_Lua->CheckType(1, Type::STRING);
 	g_Lua->CheckType(2, Type::ANGLE);
 
-	string key = g_Lua->GetString(1);
+	size_t keyLength;
+	const char* key = g_Lua->GetString(1, &keyLength);
 
 	char* err = NULL;
 
 	bool value = g_Lua->GetBool(2);
-	db.put(key, (char*)&value, sizeof value, err);
+	db.put(key, keyLength, (char*)&value, sizeof value, err);
 
 	if (err != NULL) {
 		g_Lua->Push(false);
@@ -223,13 +235,12 @@ LUA_FUNCTION(db_getString) {
 	ILuaInterface* g_Lua = Lua();
 	g_Lua->CheckType(1, Type::STRING);
 
-	string key = g_Lua->GetString(1);
+	size_t keyLength;
+	const char* key = g_Lua->GetString(1, &keyLength);
 
 	char* result = NULL;
 	size_t length;
-	bool success = db.get(key, &result, length);
-	println(*g_Lua, "Query Result: ");
-	println(*g_Lua, result);
+	bool success = db.get(key, keyLength, &result, length);
 
 	g_Lua->Push(success);
 	g_Lua->Push(result, length);
@@ -243,11 +254,12 @@ LUA_FUNCTION(db_getDouble) {
 	ILuaInterface* g_Lua = Lua();
 	g_Lua->CheckType(1, Type::STRING);
 
-	string key = g_Lua->GetString(1);
+	size_t keyLength;
+	const char* key = g_Lua->GetString(1, &keyLength);
 
 	char* result = NULL;
 	size_t length;
-	bool success = db.get(key, &result, length);
+	bool success = db.get(key, keyLength, &result, length);
 	
 	if (success) {
 		if (length == sizeof(double)) {
@@ -274,11 +286,12 @@ LUA_FUNCTION(db_getInteger) {
 	ILuaInterface* g_Lua = Lua();
 	g_Lua->CheckType(1, Type::STRING);
 
-	string key = g_Lua->GetString(1);
+	size_t keyLength;
+	const char* key = g_Lua->GetString(1, &keyLength);
 
 	char* result = NULL;
 	size_t length;
-	bool success = db.get(key, &result, length);
+	bool success = db.get(key, keyLength, &result, length);
 
 	if (success) {
 		if (length == sizeof(int)) {
@@ -305,11 +318,12 @@ LUA_FUNCTION(db_getBool) {
 	ILuaInterface* g_Lua = Lua();
 	g_Lua->CheckType(1, Type::STRING);
 
-	string key = g_Lua->GetString(1);
+	size_t keyLength;
+	const char* key = g_Lua->GetString(1, &keyLength);
 
 	char* result = NULL;
 	size_t length;
-	bool success = db.get(key, &result, length);
+	bool success = db.get(key, keyLength, &result, length);
 
 	if (success) {
 		if (length == sizeof(bool)){
@@ -336,11 +350,12 @@ LUA_FUNCTION(db_getVector) {
 	ILuaInterface* g_Lua = Lua();
 	g_Lua->CheckType(1, Type::STRING);
 
-	string key = g_Lua->GetString(1);
+	size_t keyLength;
+	const char* key = g_Lua->GetString(1, &keyLength);
 
 	char* result = NULL;
 	size_t length;
-	bool success = db.get(key, &result, length);
+	bool success = db.get(key, keyLength, &result, length);
 
 	if (success) {
 		if (length == sizeof(Vector)) {
@@ -372,11 +387,12 @@ LUA_FUNCTION(db_getAngle) {
 	ILuaInterface* g_Lua = Lua();
 	g_Lua->CheckType(1, Type::STRING);
 
-	string key = g_Lua->GetString(1);
+	size_t keyLength;
+	const char* key = g_Lua->GetString(1, &keyLength);
 
 	char* result = NULL;
 	size_t length;
-	bool success = db.get(key, &result, length);
+	bool success = db.get(key, keyLength, &result, length);
 
 	if (success) {
 		if (length == sizeof(Angle)) {
@@ -427,8 +443,7 @@ LUA_FUNCTION(fn_iter) {
 		size_t length;
 
 		const char* key = iter->getKey(&length);
-		println(*g_Lua, to_string(length).c_str());
-
+		
 		if (iter->inRange(key, length)) { // kill iteration if we've walked off the key range
 			g_Lua->Push(key, length);
 			const char* value = iter->getValue(&length);
@@ -476,9 +491,12 @@ STRING CONVERSIONS
 LUA_FUNCTION(strToDouble) {
 	ILuaInterface* g_Lua = Lua();
 	g_Lua->CheckType(1, Type::STRING);
-	string val = g_Lua->GetString(1);
-	if (val.length() == sizeof(double)){
-		double* val_d = (double*) val.c_str();
+
+	size_t length;
+	const char* val = g_Lua->GetString(1, &length);
+
+	if (length == sizeof(double)){
+		double* val_d = (double*) val;
 		g_Lua->Push(*val_d);
 		return 1;
 	}
@@ -490,9 +508,12 @@ LUA_FUNCTION(strToDouble) {
 LUA_FUNCTION(strToInteger) {
 	ILuaInterface* g_Lua = Lua();
 	g_Lua->CheckType(1, Type::STRING);
-	string val = g_Lua->GetString(1);
-	if (val.length() == sizeof(int)){
-		int* val_i = (int*)val.c_str();
+
+	size_t length;
+	const char* val = g_Lua->GetString(1, &length);
+
+	if (length == sizeof(int)){
+		const int* val_i = (const int*) val;
 		g_Lua->Push(*val_i);
 		return 1;
 	}
@@ -504,9 +525,12 @@ LUA_FUNCTION(strToInteger) {
 LUA_FUNCTION(strToVector) {
 	ILuaInterface* g_Lua = Lua();
 	g_Lua->CheckType(1, Type::STRING);
-	string val = g_Lua->GetString(1);
-	if (val.length() == sizeof(Vector)){
-		Vector* val_v = (Vector*)val.c_str();
+
+	size_t length;
+	const char* val = g_Lua->GetString(1, &length);
+
+	if (length == sizeof(Vector)){
+		const Vector* val_v = (const Vector*)val;
 		Vector* toPush = new Vector(val_v->x, val_v->y, val_v->z);
 		ILuaObject* meta = g_Lua->GetMetaTable("Vector", GLua::TYPE_VECTOR);
 			g_Lua->PushUserData(meta, toPush, GLua::TYPE_VECTOR);
@@ -522,9 +546,12 @@ LUA_FUNCTION(strToVector) {
 LUA_FUNCTION(strToAngle) {
 	ILuaInterface* g_Lua = Lua();
 	g_Lua->CheckType(1, Type::STRING);
-	string val = g_Lua->GetString(1);
-	if (val.length() == sizeof(Angle)){
-		Angle* val_a = (Angle*)val.c_str();
+
+	size_t length;
+	const char* val = g_Lua->GetString(1, &length);
+
+	if (length == sizeof(Angle)){
+		const Angle* val_a = (const Angle*)val;
 		Angle* toPush = new Angle(val_a->p, val_a->y, val_a->r);
 		ILuaObject* meta = g_Lua->GetMetaTable("Angle", GLua::TYPE_ANGLE);
 		g_Lua->PushUserData(meta, toPush, GLua::TYPE_ANGLE);
@@ -539,9 +566,12 @@ LUA_FUNCTION(strToAngle) {
 LUA_FUNCTION(strToBool) {
 	ILuaInterface* g_Lua = Lua();
 	g_Lua->CheckType(1, Type::STRING);
-	string val = g_Lua->GetString(1);
-	if (val.length() == sizeof(bool)){
-		bool* val_b = (bool*)val.c_str();
+
+	size_t length;
+	const char* val = g_Lua->GetString(1, &length);
+
+	if (length == sizeof(bool)){
+		bool* val_b = (bool*) val;
 		g_Lua->Push(*val_b);
 		return 1;
 	}
@@ -598,6 +628,7 @@ int Init(lua_State *L)
 	funcTable->SetMember("delete", database_delete);
 
 	g_Lua->SetGlobal("leveldb", funcTable);
+	g_Lua->SetGlobal("lvldb", funcTable);
 	funcTable->UnReference();
 
 	return 0;
