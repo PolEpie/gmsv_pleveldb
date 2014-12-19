@@ -84,6 +84,16 @@ leveldb.setAngle('helloAngle', Angle(1.3,2.5,3.8));
 local succ, value = leveldb.getAngle('helloAngle');
 ```
 
+<h2>Simplified Getters</h2>
+Removes error passback. Will return nil if the value wasn't found. These functions are implemented in lua that gets executed by the module.
+```Lua
+local res = leveldb.s_getAngle('key');
+local res = leveldb.s_getVector('key');
+local res = leveldb.s_getInteger('key');
+local res = leveldb.s_getDouble('key');
+local res = leveldb.s_getString('key');
+```
+
 <h2>Iteration</h2>
 The LevelDB wrapper provides a special iterator for iterating over key blocks in the database. A key block is considdered to be a block of all keys with the same prefix. 
 
