@@ -1,13 +1,19 @@
 gmsv_pleveldb
 =============
 
-Database wrapper for LevelDB by Google
+Database wrapper for <a href="https://github.com/google/leveldb">LevelDB</a>.
 
+Wrapper created by TheLastPenguin. 
+
+Installation
+=============
+1) Place gmsv_leveldb_win32.dll in your garrysmod/lua/bin/ folder with the rest of your C++ modules. Create this folder if it does not exist.
+2) Place libleveldb.dll in your garrysmod/ directory with hl2.exe 
 
 Documentation
 =============
 
-<h6>Getters and Setters</h6>
+<h2>Getters and Setters</h2>
 
 <strong>set</strong> (key:string, value:string) -> bool:success
 
@@ -57,7 +63,7 @@ leveldb.setAngle('helloAngle', Angle(1.3,2.5,3.8));
 local succ, value = leveldb.getAngle('helloAngle');
 ```
 
-<h6>Iteration</h6>
+<h2>Iteration</h2>
 The LevelDB wrapper provides a special iterator for iterating over key blocks in the database. A key block is considdered to be a block of all keys with the same prefix. 
 
 <strong>leveldb.iter</strong> (string:prefix) -> function:iterator
@@ -69,7 +75,7 @@ end
 ```
 Take note that key, value will always be strings even if the datatype of the original data was a vector, double, integer, angle, or bool. The library does however provide a set of functions for converting these strings into usable lua datatypes.
 
-<h6>Converters</h6>
+<h2>Converters</h2>
 
 <strong>toInteger</strong> (string:value) -> integer:value
 
