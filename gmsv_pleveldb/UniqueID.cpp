@@ -18,11 +18,12 @@ namespace UniqueID {
 		ILuaInterface* g_Lua = Lua();
 
 		char buff[sizeof(int64_t)*2]; // *4 since we're going down to base32
+		
 		size_t res = base32_encode((const char*)&curId, sizeof int64_t, buff, sizeof(int64_t)* 2);
 		curId++;
 		g_Lua->Push(buff, res);
 
-		if (curId % 16 == 0)
+		if (curId % 0x10000 == 0)
 			updateDiskCounter();
 
 		return 1;
@@ -39,7 +40,7 @@ namespace UniqueID {
 		if (success && length == sizeof(int64_t)) {
 			int64_t* result_i = (int64_t*)result;
 			curId = *result_i;
-			curId <<= 16;
+			curId += 0x10000;
 		} else
 			curId = 0;
 
