@@ -34,7 +34,7 @@ public:
 	}
 
 	inline bool valid() {
-		return leveldb_iter_valid(iterator);
+		return leveldb_iter_valid(iterator) != 0;
 	}
 
 	inline void next() {

@@ -6,10 +6,11 @@
 
 #include "main.h"
 
-#include "Database.h"
 #include "DatabaseIterator.h"
 #include "Vector.h"
 #include "Murmer.h"
+#include "sha1.h"
+#include "UniqueID.h"
 
 using namespace GarrysMod::Lua;
 
@@ -24,7 +25,6 @@ void println(ILuaInterface& g_Lua, const char* msg) {
 }
 
 Database db("garrysmod/x_leveldb");
-
 
 LUA_FUNCTION(db_set) {
 	ILuaInterface* g_Lua = Lua();
@@ -609,6 +609,7 @@ int Init(lua_State *L)
 	println(*g_Lua, "     Compiled on... " __DATE__ ", " __TIME__ "");
 
 	DatabaseIterator::initLua(*g_Lua);
+	UniqueID::initLua(*g_Lua);
 
 
 	ILuaObject* funcTable = g_Lua->GetNewTable();
@@ -640,7 +641,9 @@ int Init(lua_State *L)
 
 	funcTable->SetMember("iter", new_iter);
 	
-	funcTable->SetMember("mhash", MurmurHash);
+	funcTable->SetMember("mhash", Murmur::MurmurHash);
+	funcTable->SetMember("sha1", sha1::Sha1Hash);
+	funcTable->SetMember("UID", UniqueID::getUniqueID);
 
 	funcTable->SetMember("delete", database_delete);
 
@@ -652,7 +655,8 @@ int Init(lua_State *L)
 	g_Lua->Push(g_Lua->GetGlobal("RunString"));
 
 	// adds s_ versions of methods. Basically makes them return value or nil on failure, no error returned.
-	g_Lua->Push(g_Lua->GetGlobal("RunString"));
+	ILuaObject* fn_RunString = g_Lua->GetGlobal("RunString");
+	g_Lua->Push(fn_RunString);
 	g_Lua->Push(
 			"local getInteger=lvldb.getInteger;function lvldb.s_getInteger(a)local b,c=getInteger(a)"
 			"return b and c or nil end;local d=lvldb.getDouble;function lvldb.s_getDouble(a)local b,"
@@ -664,7 +668,7 @@ int Init(lua_State *L)
 		);
 	g_Lua->Call(1, 0);
 
-	g_Lua->Push(g_Lua->GetGlobal("RunString"));
+	g_Lua->Push(fn_RunString);
 	g_Lua->Push(
 			"local getInteger,setInteger=lvldb.getInteger,lvldb.setInteger;function lvldb.addInteger"
 			"(a,b)local c,d=getInteger(a)if c then setInteger(a,d+b)else setInteger(a,b)end end;loca"
@@ -672,6 +676,7 @@ int Init(lua_State *L)
 			"l c,d=getDouble(a)if c then setDouble(a,d+b)else setDouble(a,b)end end"
 		);
 	g_Lua->Call(1, 0);
+	fn_RunString->UnReference();
 
 	return 0;
 }

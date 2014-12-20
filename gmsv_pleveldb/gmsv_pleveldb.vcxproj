@@ -80,6 +80,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="BaseEncode.cpp" />
     <ClCompile Include="Database.cpp" />
     <ClCompile Include="DatabaseIterator.cpp" />
     <ClCompile Include="lua-headers\ILuaInterface.cpp" />
@@ -87,13 +88,18 @@
     <ClCompile Include="lua-headers\ILuaObject.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Murmer.cpp" />
+    <ClCompile Include="sha1.cpp" />
+    <ClCompile Include="UniqueID.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="BaseEncode.h" />
     <ClInclude Include="Database.h" />
     <ClInclude Include="DatabaseIterator.h" />
     <ClInclude Include="LuaUpvalues.h" />
     <ClInclude Include="main.h" />
     <ClInclude Include="Murmer.h" />
+    <ClInclude Include="sha1.h" />
+    <ClInclude Include="UniqueID.h" />
     <ClInclude Include="Vector.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
