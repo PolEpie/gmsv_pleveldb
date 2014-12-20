@@ -16,9 +16,11 @@ using namespace GarrysMod::Lua;
 GMOD_MODULE(Init, Shutdown);
 
 void println(ILuaInterface& g_Lua, const char* msg) {
-	g_Lua.Push(g_Lua.GetGlobal("print"));
+	ILuaObject* print = g_Lua.GetGlobal("print");
+	g_Lua.Push(print);
 	g_Lua.Push(msg);
 	g_Lua.Call(1, 0);
+	print->UnReference();
 }
 
 Database db("garrysmod/x_leveldb");
@@ -157,7 +159,7 @@ LUA_FUNCTION(db_setInteger) {
 LUA_FUNCTION(db_setVector) {
 	ILuaInterface* g_Lua = Lua();
 	g_Lua->CheckType(1, Type::STRING);
-	g_Lua->CheckType(2, Type::NUMBER);
+	g_Lua->CheckType(2, Type::VECTOR);
 
 	size_t keyLength;
 	const char* key = g_Lua->GetString(1, &keyLength);
@@ -364,10 +366,13 @@ LUA_FUNCTION(db_getVector) {
 
 			g_Lua->Push(true);
 
-			Vector* toPush = new Vector(result_v->x, result_v->y, result_v->z);
-			ILuaObject* meta = g_Lua->GetMetaTable("Vector", GLua::TYPE_VECTOR);
-				g_Lua->PushUserData(meta, toPush, GLua::TYPE_VECTOR);
-			meta->UnReference();
+			ILuaObject* newVector = g_Lua->GetGlobal("Vector");
+			g_Lua->Push(newVector);
+			g_Lua->Push(result_v->x);
+			g_Lua->Push(result_v->y);
+			g_Lua->Push(result_v->z);
+			g_Lua->Call(3, 1);
+			newVector->UnReference();
 		}
 		else {
 			g_Lua->Push(false);
@@ -401,10 +406,13 @@ LUA_FUNCTION(db_getAngle) {
 
 			g_Lua->Push(true);
 
-			Angle* toPush = new Angle(result_v->p, result_v->y, result_v->r);
-			ILuaObject* meta = g_Lua->GetMetaTable("Angle", GLua::TYPE_ANGLE);
-			g_Lua->PushUserData(meta, toPush, GLua::TYPE_ANGLE);
-			meta->UnReference();
+			ILuaObject* newAngle = g_Lua->GetGlobal("Angle");
+			g_Lua->Push(newAngle);
+			g_Lua->Push(result_v->p);
+			g_Lua->Push(result_v->y);
+			g_Lua->Push(result_v->r);
+			g_Lua->Call(3, 1);
+			newAngle->UnReference();
 		}
 		else {
 			g_Lua->Push(false);
@@ -532,10 +540,13 @@ LUA_FUNCTION(strToVector) {
 
 	if (length == sizeof(Vector)){
 		const Vector* val_v = (const Vector*)val;
-		Vector* toPush = new Vector(val_v->x, val_v->y, val_v->z);
-		ILuaObject* meta = g_Lua->GetMetaTable("Vector", GLua::TYPE_VECTOR);
-			g_Lua->PushUserData(meta, toPush, GLua::TYPE_VECTOR);
-		meta->UnReference();
+		ILuaObject* newVector = g_Lua->GetGlobal("Vector");
+		g_Lua->Push(newVector);
+		g_Lua->Push(val_v->x);
+		g_Lua->Push(val_v->y);
+		g_Lua->Push(val_v->z);
+		g_Lua->Call(3, 1);
+		newVector->UnReference();
 		return 1;
 	}
 	else {
@@ -553,10 +564,13 @@ LUA_FUNCTION(strToAngle) {
 
 	if (length == sizeof(Angle)){
 		const Angle* val_a = (const Angle*)val;
-		Angle* toPush = new Angle(val_a->p, val_a->y, val_a->r);
-		ILuaObject* meta = g_Lua->GetMetaTable("Angle", GLua::TYPE_ANGLE);
-		g_Lua->PushUserData(meta, toPush, GLua::TYPE_ANGLE);
-		meta->UnReference();
+		ILuaObject* newAngle = g_Lua->GetGlobal("Angle");
+		g_Lua->Push(newAngle);
+		g_Lua->Push(val_a->p);
+		g_Lua->Push(val_a->y);
+		g_Lua->Push(val_a->r);
+		g_Lua->Call(3, 1);
+		newAngle->UnReference();
 		return 1;
 	}
 	else {
