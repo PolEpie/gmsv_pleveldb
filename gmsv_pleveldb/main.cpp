@@ -652,22 +652,8 @@ int Init(lua_State *L)
 	funcTable->UnReference();
 
 
-	g_Lua->Push(g_Lua->GetGlobal("RunString"));
-
 	// adds s_ versions of methods. Basically makes them return value or nil on failure, no error returned.
 	ILuaObject* fn_RunString = g_Lua->GetGlobal("RunString");
-	g_Lua->Push(fn_RunString);
-	g_Lua->Push(
-			"local getInteger=lvldb.getInteger;function lvldb.s_getInteger(a)local b,c=getInteger(a)"
-			"return b and c or nil end;local d=lvldb.getDouble;function lvldb.s_getDouble(a)local b,"
-			"c=getDouble(a)return b and c or nil end;local d=lvldb.getAngle;function lvldb.s_getAngl"
-			"e(a)local b,c=getAngle(a)return b and c or nil end;local d=lvldb.getVector;function lvl"
-			"db.s_getVector(a)local b,c=getVector(a)return b and c or nil end;local d=lvldb.getBool;"
-			"function lvldb.s_getBool(a)local b,c=getBool(a)return b and c or nil end;local d=lvldb."
-			"getString;function lvldb.s_getString(a)local b,c=getString(a)return b and c or nil end"
-		);
-	g_Lua->Call(1, 0);
-
 	g_Lua->Push(fn_RunString);
 	g_Lua->Push(
 			"local getInteger,setInteger=lvldb.getInteger,lvldb.setInteger;function lvldb.addInteger"
@@ -676,6 +662,18 @@ int Init(lua_State *L)
 			"l c,d=getDouble(a)if c then setDouble(a,d+b)else setDouble(a,b)end end"
 		);
 	g_Lua->Call(1, 0);
+
+	g_Lua->Push(fn_RunString);
+	g_Lua->Push(
+		"local function wrap(getter) return function(key)local succ, val = getter(key) if succ then return val end end end\n"
+		"lvldb.s_getString = wrap(lvldb.getString)\n"
+		"lvldb.s_getDouble = wrap(lvldb.getDouble)\n"
+		"lvldb.s_getInteger = wrap(lvldb.getInteger)\n"
+		"lvldb.s_getVector = wrap(lvldb.getVector)\n"
+		"lvldb.s_getAngle = wrap(lvldb.getAngle)\n"
+		"lvldb.s_getBool = wrap(lvldb.getBool)\n");
+	g_Lua->Call(1, 0);
+
 	fn_RunString->UnReference();
 
 	return 0;

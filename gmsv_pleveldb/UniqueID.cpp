@@ -17,10 +17,11 @@ namespace UniqueID {
 	LUA_FUNCTION(getUniqueID) {
 		ILuaInterface* g_Lua = Lua();
 
-		char buff[sizeof(int64_t)*2]; // *4 since we're going down to base32
+		char buff[sizeof(int64_t)*2]; // *2 since we're going down to base32
 		
 		size_t res = base32_encode((const char*)&curId, sizeof int64_t, buff, sizeof(int64_t)* 2);
 		curId++;
+
 		g_Lua->Push(buff, res);
 
 		if (curId % 0x10000 == 0)
